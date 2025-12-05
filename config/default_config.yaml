@@ -1,0 +1,119 @@
+# Badminton Court Detection Configuration
+# This configuration is designed to be adaptive and not rely on fixed hyperparameters
+
+video:
+  input_path: "input/"
+  output_path: "output/"
+  output_format: "mp4"
+  output_codec: "mp4v"
+  fps: null # null = use source fps
+  resolution: null # null = use source resolution
+
+court_detection:
+  # Detection method: 'edge', 'color', 'ml', 'hybrid'
+  method: "hybrid"
+
+  # Edge detection (Canny + Hough)
+  edge:
+    canny_threshold1_percentile: 50 # Adaptive based on image statistics
+    canny_threshold2_percentile: 80
+    hough_threshold_ratio: 0.3 # Ratio of max line length
+    min_line_length_ratio: 0.1 # Relative to image diagonal
+    max_line_gap_ratio: 0.02
+
+  # Color segmentation for court lines
+  color:
+    # White lines detection (HSV ranges - will be calibrated per video)
+    auto_calibrate: true
+    white_line:
+      h_range: [0, 180]
+      s_range: [0, 50]
+      v_range: [200, 255]
+    # Court surface detection
+    court_surface:
+      detect_green: true
+      detect_wood: true
+
+  # ML-based detection
+  ml:
+    model: "court_segmentation"
+    confidence_threshold: 0.5
+    use_pretrained: true
+
+  # Focus court selection
+  focus_selection:
+    method: "largest_centered" # 'largest', 'centered', 'largest_centered', 'most_active'
+    center_weight: 0.3
+    size_weight: 0.7
+    activity_detection: true # Use optical flow to detect active court
+
+court_masking:
+  # Mask settings
+  background_color: [0, 0, 0] # Black background
+
+  # Edge smoothing
+  feather_edges: true
+  feather_radius_ratio: 0.005 # Relative to image size
+
+  # Mask expansion (to ensure full court capture)
+  expand_mask_ratio: 0.02 # Slight expansion to avoid clipping
+
+  # Behind court masking
+  mask_behind_court: true
+  behind_court_detection: "perspective" # 'fixed', 'perspective', 'semantic'
+
+player_detection:
+  model: "yolov8x" # 'yolov8n', 'yolov8s', 'yolov8m', 'yolov8l', 'yolov8x'
+  confidence_threshold: 0.5
+  iou_threshold: 0.45
+  classes: [0] # COCO class 0 = person
+
+  # Filter players by court region
+  filter_by_court: true
+  court_margin_ratio: 0.05 # Allow slight margin outside court
+
+player_tracking:
+  # Tracker: 'bytetrack', 'botsort', 'deepsort'
+  tracker: "bytetrack"
+
+  bytetrack:
+    track_high_thresh: 0.5
+    track_low_thresh: 0.1
+    new_track_thresh: 0.6
+    track_buffer: 30
+    match_thresh: 0.8
+
+  # Track visualization
+  visualization:
+    show_track_id: true
+    show_trajectory: true
+    trajectory_length: 30
+    bbox_thickness: 2
+    id_font_scale: 0.8
+
+processing:
+  # Performance settings
+  batch_size: 1
+  num_workers: 4
+  device: "auto" # 'auto', 'cuda', 'cpu'
+
+  # Frame processing
+  process_every_n_frames: 1 # 1 = process all frames
+
+  # Calibration
+  calibration_frames: 30 # Number of frames to use for initial calibration
+  recalibrate_interval: 300 # Recalibrate every N frames (0 = no recalibration)
+
+output:
+  # Video output
+  save_video: true
+  video_quality: 95
+
+  # Debug output
+  save_debug_frames: false
+  debug_frame_interval: 30
+
+  # Annotations
+  show_court_boundary: false
+  show_mask_overlay: false
+  mask_overlay_alpha: 0.3
