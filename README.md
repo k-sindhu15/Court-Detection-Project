@@ -2,6 +2,9 @@
 
 A computer vision system for automatically detecting and isolating the focused badminton court from multi-court video footage, with player tracking capabilities.
 
+<img width="1068" height="649" alt="Screenshot From 2025-12-05 12-39-57" src="https://github.com/user-attachments/assets/148f633d-7b9f-4114-b145-82f5c4cff025" />
+
+
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
 [![OpenCV](https://img.shields.io/badge/OpenCV-4.8+-green.svg)](https://opencv.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-red.svg)](https://pytorch.org/)
