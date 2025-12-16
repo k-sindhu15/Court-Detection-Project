@@ -121,6 +121,20 @@ python main.py match.mp4 processed.mp4 --bg-color 255,255,255
 python main.py match.mp4 processed.mp4 --show-boundary
 ```
 
+### Web Interface
+
+For a user-friendly GUI, you can run the web interface:
+
+```bash
+# Standard web interface
+python app.py
+
+# Fast web interface (optimized for speed)
+python app_fast.py
+```
+
+This will start a local web server where you can upload videos and process them through a browser interface.
+
 ### Python API
 
 ```python
