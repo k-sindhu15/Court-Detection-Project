@@ -85,13 +85,19 @@ def process_video(
         
         progress(0.3, desc="Processing video...")
         
+        # Progress callback
+        def update_progress(current, total):
+            pct = 0.3 + (current / total) * 0.7
+            progress(pct, desc=f"Processing video... {current}/{total} frames")
+        
         # Process video
         processor.process_video(
             input_path=input_path,
             output_path=output_path,
             mask_court=enable_masking,
             track_players=enable_tracking,
-            show_progress=False
+            show_progress=False,
+            progress_callback=update_progress
         )
         
         progress(1.0, desc="Complete!")
@@ -247,7 +253,7 @@ def main():
     # Set share=True to create a public link
     app.launch(
         server_name="0.0.0.0",
-        server_port=7860,
+        server_port=None,
         share=False,
         show_error=True
     )

@@ -8,7 +8,7 @@ complete video processing pipeline.
 import cv2
 import numpy as np
 from pathlib import Path
-from typing import Optional, Dict, Any, Tuple, Generator
+from typing import Optional, Dict, Any, Tuple, Generator, Callable
 from dataclasses import dataclass
 import logging
 from tqdm import tqdm
@@ -194,7 +194,8 @@ class BadmintonCourtProcessor:
         output_path: str,
         mask_court: bool = True,
         track_players: bool = True,
-        show_progress: bool = True
+        show_progress: bool = True,
+        progress_callback: Optional[Callable[[int, int], None]] = None
     ) -> None:
         """
         Process a complete video file.
@@ -205,6 +206,7 @@ class BadmintonCourtProcessor:
             mask_court: Whether to apply court masking
             track_players: Whether to track players
             show_progress: Whether to show progress bar
+            progress_callback: Optional callback(current, total)
         """
         logger.info(f"Processing video: {input_path}")
         logger.info(f"Output: {output_path}")
@@ -246,6 +248,10 @@ class BadmintonCourtProcessor:
                     # Write output frame
                     if result.frame is not None:
                         writer.write(result.frame)
+                    
+                    # Update progress
+                    if progress_callback:
+                        progress_callback(frame_idx + 1, reader.total_frames)
         
         logger.info(f"Video processing complete: {output_path}")
     
