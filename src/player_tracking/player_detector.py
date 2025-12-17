@@ -103,12 +103,10 @@ class PlayerDetector:
             model_path = f"{self.model_name}.pt"
             logger.info(f"Loading YOLO model: {model_path}")
             
-            self.model = YOLO(model_path)
+            self.model = YOLO(model_path, device='cpu')
             
-            # Set device
-            if self.device == 'auto':
-                import torch
-                self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+            # Set device to CPU for compatibility
+            self.device = 'cpu'
             
             logger.info(f"YOLO model loaded successfully on {self.device}")
             self._initialized = True

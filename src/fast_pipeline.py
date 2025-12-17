@@ -64,8 +64,9 @@ class FastProcessor:
         if self._yolo is None and self.enable_tracking:
             try:
                 from ultralytics import YOLO
-                self._yolo = YOLO(f"{self.model_name}.pt")
-                logger.info(f"Loaded {self.model_name}")
+                # Force CPU usage for compatibility with low-spec systems
+                self._yolo = YOLO(f"{self.model_name}.pt", device='cpu')
+                logger.info(f"Loaded {self.model_name} on CPU")
             except Exception as e:
                 logger.warning(f"Failed to load YOLO: {e}")
                 self.enable_tracking = False
